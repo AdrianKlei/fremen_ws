@@ -48,11 +48,6 @@ class fremen_interface(object):
     def random_sampling(self, nepochs):
         pass
 
-    def dummy_function(self):
-        print("This is the output of the dummy function!")
-
-
-
     def get_build_and_eval_states(self, epochs, states, sampling_type='extrapolation'):
         """
         This function splits the given data of a cell into a training and evaluation set
@@ -178,6 +173,10 @@ class fremen_interface(object):
             ps = self.FremenClient.get_result()
             # Wieso wandeln wir das in eine list um ?
             prob = list(ps.probabilities)
+
+            save_result_to_file = False
+            if save_result_to_file == True:
+                numpy.savetxt("/home/adrian/predictions/predictions.txt", prob)
             return prob
         elif data_type == 'float':
             fremgoal = fremenserver.msg.FremenGoal()
