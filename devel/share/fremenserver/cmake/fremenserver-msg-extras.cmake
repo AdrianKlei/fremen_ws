@@ -1,0 +1,2 @@
+set(fremenserver_MESSAGE_FILES "/home/adrian/test_ws/devel/share/fremenserver/msg/FremenAction.msg;/home/adrian/test_ws/devel/share/fremenserver/msg/FremenActionGoal.msg;/home/adrian/test_ws/devel/share/fremenserver/msg/FremenActionResult.msg;/home/adrian/test_ws/devel/share/fremenserver/msg/FremenActionFeedback.msg;/home/adrian/test_ws/devel/share/fremenserver/msg/FremenGoal.msg;/home/adrian/test_ws/devel/share/fremenserver/msg/FremenResult.msg;/home/adrian/test_ws/devel/share/fremenserver/msg/FremenFeedback.msg")
+set(fremenserver_SERVICE_FILES "")
