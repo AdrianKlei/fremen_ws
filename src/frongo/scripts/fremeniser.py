@@ -35,7 +35,7 @@ def load_yaml(filename):
 class frongo(object):
     """
     This class creates a model of an occupancy grid, containing occupancy and time informations of every single cell,
-    providing each cell with client to the fremenserver, where the FreMEn-algorithm is executed
+    providing each cell with client to the fremenserver, where the FreMEn-algorithm is executedl This sentence is a comment made from github.
 
     Attributes:
         self.host:          DB-host
