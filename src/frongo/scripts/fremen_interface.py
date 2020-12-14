@@ -36,7 +36,7 @@ class fremen_interface(object):
         # Samples for result sampling
         # Ratio should include complete weeks
         index_b = range(int(numpy.ceil(nepochs*0.75))) # 0.064 resembles ca one week of aruba dataset
-        index_e = range(int(numpy.ceil(nepochs*0.75)), nepochs) # default: range(int(numpy.ceil(nepochs*0.66)), nepochs)
+        index_e = range(int(numpy.ceil(nepochs*0.75)), nepochs)# default: range(int(numpy.ceil(nepochs*0.66)), nepochs)
 
         if not index_e:
             # Question : in which case this condition is satisfied?
@@ -133,12 +133,13 @@ class fremen_interface(object):
         frevgoal.id = model_id
         frevgoal.times = e_epochs
         frevgoal.states = e_states
-        frevgoal.order = 5 # default value is 5 !!!
+        frevgoal.order = 20 # default value is 5 !!!
 
         self.FremenClient.send_goal(frevgoal)
         self.FremenClient.wait_for_result()
         pse = self.FremenClient.get_result()
         print(pse)
+        numpy.savetxt("/home/adrian/fremen_predictions/aruba/binary/interval_900/errors.txt", pse.errors)    # needs to be deleted
         print("chosen order %d" %pse.errors.index(min(pse.errors)))
         return pse.errors.index(min(pse.errors))
 
@@ -174,9 +175,7 @@ class fremen_interface(object):
             # Wieso wandeln wir das in eine list um ?
             prob = list(ps.probabilities)
 
-            save_result_to_file = False
-            if save_result_to_file == True:
-                numpy.savetxt("/home/adrian/predictions/predictions.txt", prob)
+            numpy.savetxt("/home/adrian/fremen_predictions/aruba/binary/interval_300/master_bedroom_optimal_order.txt", prob) # needs to be deleted later
             return prob
         elif data_type == 'float':
             fremgoal = fremenserver.msg.FremenGoal()
@@ -192,6 +191,7 @@ class fremen_interface(object):
 
             ps = self.FremenClient.get_result()
             prob = list(ps.probabilities)
+            numpy.savetxt("/home/adrian/fremen_predictions/aruba/float/interval_300/master_bedroom_optimal_order.txt", prob) # needs to be deleted later
             return prob
 
     def add_and_eval_models_modified(self, model_id, a_epochs, a_states, e_epochs, e_states):

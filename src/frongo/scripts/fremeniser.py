@@ -172,7 +172,7 @@ class frongo(object):
                     epochs = i.epochs
                 predictions = i._predict_outcome(epochs, order=req.order)
         # IMPORTANT: the following line needs to be adjusted to the currently used database
-        np.savetxt("/home/adrian/Desktop/master_bedroom_frongo.txt", predictions)
+        #np.savetxt("/home/adrian/Desktop/master_bedroom_frongo.txt", predictions)
         return epochs, predictions
 
     def create_models(self, data):
