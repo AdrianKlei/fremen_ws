@@ -19,6 +19,7 @@ add_service_files(
   #PredictState.srv
   PredictStateOrder.srv
   AddOccupancyGrid.srv
+  EvaluateModels.srv
 )
 
 generate_messages(

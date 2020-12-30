@@ -1,29 +1,33 @@
 import json
-import yaml
 import datetime
 from fremen_interface import *
 
+
 def get_field(item, key):
     """
-    This function screens a DB-entry for a desired key
+    Screens a DB-entry for a desired key
 
-    Parameters:
+    Args:
         item:   DB-entry of a cell
         key:    information of interest of the DB-entry
 
     Returns:
-        value:  the corresponding value (e.g. a timestamp, an occupancy-value)
+        Corresponding value (e.g. a timestamp, an occupancy-value)
     """
-    # Is key.split('.') really neccessary, if we have just one key word?
     fields = key.split('.')
     value = item
     for i in fields:
         value = value[i]
     return value
 
+
 class TModels(object):
     """
-    This class creates a temporal model of each cell of the occupancy-grid
+    TModels class
+
+    Defines a temporal model for an occupancy-grid cell containing information about
+    observation times and states
+
 
     Attributes:
         self.query:     search-query for finding the cell information in the DB
@@ -34,11 +38,25 @@ class TModels(object):
     def __init__(self, name, data_field='data', data_type='boolean', data_conf='',
                  timestamp_field='timestamp', timestamp_type='epoch',
                  query='{}', db='uol_database', collection='cells'):
+        """
+        Constructor
+
+        Args:
+            name: name of the cell
+            data_field: key of a DB-entry where the data can be found
+            data_type: specifies the data type of an entry (e.g. boolean, float)
+            data_conf: includes extended data configurations
+            timestamp_field: key of a DB-entry where the timestamp can be found
+            timestamp_type: the timestamp type of an entry (default: epoch)
+            query: query to extract cell information from a DB
+            db: DB containing the cell's information
+            collection: corresponding collection inside the DB
+        """
         self.name = name
-        self.db=db
-        self.collection=collection
-        self.query=query
-        self.data_field=data_field
+        self.db = db
+        self.collection = collection
+        self.query = query
+        self.data_field = data_field
         self.data_type = data_type
         self.data_conf = data_conf
         self.timestamp_field = timestamp_field
@@ -48,6 +66,8 @@ class TModels(object):
         self.states = []
         self._set_data_configuration()
         self._fremen = fremen_interface()
+        self.error_best_order = 0.0
+        self.error_static = 0.0
         if self.data_type == 'boolean':
             self.min_value = False
             self.max_value = True
@@ -55,13 +75,11 @@ class TModels(object):
 
     def _set_props_from_dict(self, data):
         """
-        This function assigns the constructor-values with the specifications written inside the specifications-file
+        Assigns the constructor-values with the specifications written inside aspecifications-file
 
-        Parameters:
+        Args:
             data: specifications for the constructor-values
 
-        Returns:
-            nothing
         """
         for i in data.keys():
             if i in dir(self):
@@ -70,55 +88,48 @@ class TModels(object):
         self._set_data_configuration()
 
     def _set_data_configuration(self):
+        """ Enables extended data configurations """
         if self.data_conf != '':
-            self._dconf=json.loads(self.data_conf)
+            self._dconf = json.loads(self.data_conf)
         else:
-            self._dconf=self.data_conf
+            self._dconf = self.data_conf
 
-    # Each matching database-entry found by collection.find() is analyzed and added with this function
     def _add_entry(self, entry):
         """
-        This function analyzes each entry inside the DB of the corresponding cell
+        Analyzes each entry of the corresponding cell inside the DB
 
-        Parameters:
+        Args:
             entry:  DB-entry
 
-        Returns:
-            nothing
         """
         self.unknown = False
         if self.timestamp_type == 'datetime':
-            # Question: what does strftime() does?
             epoch = int(get_field(entry, self.timestamp_field).strftime('%s'))
         else:
             epoch = int(get_field(entry, self.timestamp_field))
 
-        # Maybe I can delete this functionality ?
         state = self._decode_state(entry)
 
         if state != 'none':
 
-            #self._set_min_max_values(state, epoch) # Nochmal anschauen die function
             self.states.append(state)
             self.epochs.append(epoch)
 
-
     def _decode_state(self, entry):
         """
-        This function decodes the given occupancy state. The decoding depends on whether the datatype is specified as
+        Decodes the given occupancy state. Decoding depends on whether the datatype is specified as
         boolean or float
 
-        Parameters:
+        Args:
             entry:  DB-entry of the corresponding cell
 
-        Returns:
-            state:  The decoded state in the specified format (boolean, float)
+        Returns: decoded state in the specified format (boolean, float)
         """
         state = 'none'
         if self.data_type == 'boolean':
             if not self.data_conf:
                 state = get_field(entry, self.data_field)
-                # restrict statet to {0,1}
+                # restrict state to {0,1}
                 if state > 1:
                     state = 1
                 if state < 0:
@@ -129,7 +140,7 @@ class TModels(object):
                     state = True
                 if a in self._dconf["False"]:
                     state = False
-        # I need to implement the functions for non binary states!
+
         if self.data_type == 'float':
             if not self.data_conf:
                 state = get_field(entry, self.data_field)
@@ -137,21 +148,26 @@ class TModels(object):
 
     def _create_fremen_models(self):
         """
-        This function creates a FreMEn-model for a cell. It assignes the prediction order with the lowest error to
+        Creates a FreMEn-model for a cell. Assigns the prediction order with the lowest error to
         the variable self.order
 
-        Parameters:
-            none
-
-        Returns:
-            none
         """
         print("_create_fremen_models check-statement")
         print(self.name)
         print(self.data_field)
-        self.order = self._fremen.create_fremen_model(self.name, self.epochs, self.states, self.data_type)
+        self.order, self.error_best_order, self.error_static = self._fremen.create_fremen_model(
+            self.name, self.epochs, self.states, self.data_type)
 
     def _predict_outcome(self, epochs, order=-1):
+        """
+        Predicts probability (boolean) or person number (float) for epochs
+
+        Args:
+            epochs: series of timestamps
+            order: FreMEn model order
+
+        Returns: Probabilities (boolean) or person numbers (float) for requested epochs
+        """
         if not self.unknown:
             # The _predict_outcome method is used for callback of predict with and without order
             # If no order is given, the order calculated by the evaluation method gets assigned
@@ -165,6 +181,9 @@ class TModels(object):
                 probs.append(0.5)
             return probs
 
-
     def _set_unknown(self, status):
+        """
+        Sets the cell state to unknown, indicating that no observations have been made for
+        this cell
+        """
         self.unknown = status

@@ -8,6 +8,8 @@
     (:file "_package_AddCell" :depends-on ("_package"))
     (:file "AddOccupancyGrid" :depends-on ("_package_AddOccupancyGrid"))
     (:file "_package_AddOccupancyGrid" :depends-on ("_package"))
+    (:file "EvaluateModels" :depends-on ("_package_EvaluateModels"))
+    (:file "_package_EvaluateModels" :depends-on ("_package"))
     (:file "GetModelName" :depends-on ("_package_GetModelName"))
     (:file "_package_GetModelName" :depends-on ("_package"))
     (:file "GraphModel" :depends-on ("_package_GraphModel"))
