@@ -14,6 +14,24 @@ CFrelementSet::~CFrelementSet()
 	for (int i=0;i<numFrelements;i++) delete frelements[i];
 }
 
+int CFrelementSet::upload_params(const char *name, float periods[], float amplitudes[], float phases[], int length)
+{
+  bool exists = find(name);
+  if (exists == false){
+    frelements[numFrelements++] = new CFrelement(name);
+    activeIndex = numFrelements-1;
+    active = frelements[numFrelements-1];
+    active->gain = amplitudes[0];  // does that work?
+    for (int i = 1; i < length; i++)
+    {
+      active->frelements[i-1].period = periods[i];
+      active->frelements[i-1].amplitude = amplitudes[i];
+      active->frelements[i-1].phase = phases[i];
+    }
+  }
+  return length;
+}
+
 int CFrelementSet::add(const char *name,uint32_t times[],float states[],int length)
 {
 	bool exists = find(name);

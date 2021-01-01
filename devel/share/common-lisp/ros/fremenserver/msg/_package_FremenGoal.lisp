@@ -17,4 +17,10 @@
           VALUES
           CONFIDENCE-VAL
           CONFIDENCE
+          PERIODS-VAL
+          PERIODS
+          AMPLITUDES-VAL
+          AMPLITUDES
+          PHASES-VAL
+          PHASES
 ))

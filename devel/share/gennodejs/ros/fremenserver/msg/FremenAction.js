@@ -86,7 +86,7 @@ class FremenAction {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '14f6cce3a70244709ad0705f23811952';
+    return '1a6cb79ba794614856b2706e5de6b449';
   }
 
   static messageDefinition() {
@@ -168,6 +168,11 @@ class FremenAction {
     
     #specific for the 'detect' 
     float32   confidence   	#confidence level for the anomaly detection
+    
+    #specific for the 'upload_params'
+    float32[] periods
+    float32[] amplitudes
+    float32[] phases
     
     
     ================================================================================

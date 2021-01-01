@@ -27,6 +27,9 @@ class FremenGoal {
       this.states = null;
       this.values = null;
       this.confidence = null;
+      this.periods = null;
+      this.amplitudes = null;
+      this.phases = null;
     }
     else {
       if (initObj.hasOwnProperty('operation')) {
@@ -83,6 +86,24 @@ class FremenGoal {
       else {
         this.confidence = 0.0;
       }
+      if (initObj.hasOwnProperty('periods')) {
+        this.periods = initObj.periods
+      }
+      else {
+        this.periods = [];
+      }
+      if (initObj.hasOwnProperty('amplitudes')) {
+        this.amplitudes = initObj.amplitudes
+      }
+      else {
+        this.amplitudes = [];
+      }
+      if (initObj.hasOwnProperty('phases')) {
+        this.phases = initObj.phases
+      }
+      else {
+        this.phases = [];
+      }
     }
   }
 
@@ -106,6 +127,12 @@ class FremenGoal {
     bufferOffset = _arraySerializer.float32(obj.values, buffer, bufferOffset, null);
     // Serialize message field [confidence]
     bufferOffset = _serializer.float32(obj.confidence, buffer, bufferOffset);
+    // Serialize message field [periods]
+    bufferOffset = _arraySerializer.float32(obj.periods, buffer, bufferOffset, null);
+    // Serialize message field [amplitudes]
+    bufferOffset = _arraySerializer.float32(obj.amplitudes, buffer, bufferOffset, null);
+    // Serialize message field [phases]
+    bufferOffset = _arraySerializer.float32(obj.phases, buffer, bufferOffset, null);
     return bufferOffset;
   }
 
@@ -131,6 +158,12 @@ class FremenGoal {
     data.values = _arrayDeserializer.float32(buffer, bufferOffset, null)
     // Deserialize message field [confidence]
     data.confidence = _deserializer.float32(buffer, bufferOffset);
+    // Deserialize message field [periods]
+    data.periods = _arrayDeserializer.float32(buffer, bufferOffset, null)
+    // Deserialize message field [amplitudes]
+    data.amplitudes = _arrayDeserializer.float32(buffer, bufferOffset, null)
+    // Deserialize message field [phases]
+    data.phases = _arrayDeserializer.float32(buffer, bufferOffset, null)
     return data;
   }
 
@@ -145,7 +178,10 @@ class FremenGoal {
     length += 4 * object.orders.length;
     length += object.states.length;
     length += 4 * object.values.length;
-    return length + 36;
+    length += 4 * object.periods.length;
+    length += 4 * object.amplitudes.length;
+    length += 4 * object.phases.length;
+    return length + 48;
   }
 
   static datatype() {
@@ -155,7 +191,7 @@ class FremenGoal {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '3da51b48cac313fb0b866f25a6c94989';
+    return '4349b55697a98adfe8c174ca69c62660';
   }
 
   static messageDefinition() {
@@ -190,6 +226,11 @@ class FremenGoal {
     
     #specific for the 'detect' 
     float32   confidence   	#confidence level for the anomaly detection
+    
+    #specific for the 'upload_params'
+    float32[] periods
+    float32[] amplitudes
+    float32[] phases
     
     
     `;
@@ -262,6 +303,27 @@ class FremenGoal {
     }
     else {
       resolved.confidence = 0.0
+    }
+
+    if (msg.periods !== undefined) {
+      resolved.periods = msg.periods;
+    }
+    else {
+      resolved.periods = []
+    }
+
+    if (msg.amplitudes !== undefined) {
+      resolved.amplitudes = msg.amplitudes;
+    }
+    else {
+      resolved.amplitudes = []
+    }
+
+    if (msg.phases !== undefined) {
+      resolved.phases = msg.phases;
+    }
+    else {
+      resolved.phases = []
     }
 
     return resolved;

@@ -127,12 +127,12 @@ struct MD5Sum< ::fremenserver::FremenAction_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "14f6cce3a70244709ad0705f23811952";
+    return "1a6cb79ba794614856b2706e5de6b449";
   }
 
   static const char* value(const ::fremenserver::FremenAction_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x14f6cce3a7024470ULL;
-  static const uint64_t static_value2 = 0x9ad0705f23811952ULL;
+  static const uint64_t static_value1 = 0x1a6cb79ba7946148ULL;
+  static const uint64_t static_value2 = 0x56b2706e5de6b449ULL;
 };
 
 template<class ContainerAllocator>
@@ -227,6 +227,11 @@ float32[]   values   	#sequence of values observed at the particular times - spe
 \n\
 #specific for the 'detect' \n\
 float32   confidence   	#confidence level for the anomaly detection\n\
+\n\
+#specific for the 'upload_params'\n\
+float32[] periods\n\
+float32[] amplitudes\n\
+float32[] phases\n\
 \n\
 \n\
 ================================================================================\n\

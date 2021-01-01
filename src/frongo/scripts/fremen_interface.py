@@ -188,6 +188,37 @@ class fremen_interface(object):
             prob = list(ps.probabilities)
             return prob
 
+    def upload_grid(self, name, periods, amplitudes, phases):
+        fremgoal = fremenserver.msg.FremenGoal()
+        fremgoal.operation = "upload_params"
+        fremgoal.id = name
+        fremgoal.periods = periods
+        fremgoal.amplitudes = amplitudes
+        fremgoal.phases = phases
+        self.FremenClient.send_goal(fremgoal)
+        self.FremenClient.wait_for_result(timeout=rospy.Duration(10.0))
+        result = self.FremenClient.get_result()
+        print(result.message)
+
+    def save_model_params(self, name):
+
+        fremgoal = fremenserver.msg.FremenGoal()
+        fremgoal.operation = "view"
+        fremgoal.id = name
+        fremgoal.order = 10
+
+        self.FremenClient.send_goal(fremgoal)
+        self.FremenClient.wait_for_result(timeout=rospy.Duration(10.0))
+        params = self.FremenClient.get_result()
+        print("Received params !")
+        print(params)
+        print(type(params))
+        periods = list(params.probabilities)
+        amplitudes = list(params.entropies)
+        phases = list(params.errors)
+
+        return periods, amplitudes, phases
+
     def add_and_eval_models_modified(self, model_id, a_epochs, a_states, e_epochs, e_states):
         """
         Produces a FreMEn-model of a cell for the case of non-binary states,

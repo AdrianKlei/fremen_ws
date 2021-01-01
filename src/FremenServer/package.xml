@@ -2,12 +2,12 @@
 <package format="2">
   <name>fremenserver</name>
   <version>0.0.0</version>
-  <description>FremenServer is a tool for prediction of binary states based on non-uniform Fourier Transform. It uses the frequency spectrum analysis to identify reoccuring patterns in temporal sequences of binary states and represents the probability of these states in an analythical form as a combination of harmonic functions. This allows to learn long-term dynamics of the environment and use the learned experience to predict states of the world models used in mobile robotics. This ability is beneficial for tasks like self-localization, object search, path planning, anomaly detection and exploration.</description>
+  <description>FremenServer is a tool for prediction of binary states probabilities or non-binary interval-arrival rates. It is based on the Fourier Transform. It uses the frequency spectrum analysis to identify roeccuring patterns in temporal sequences of binary states or non-binary interval-arrival rates.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="tkrajnik@lincoln.ac.uk">Tom Krajnik</maintainer>
+  <maintainer email="a.kleimeier@stud.uni-hannover.de">Adrian Kleimeier</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
@@ -18,11 +18,6 @@
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
   <!-- <url type="website">http://wiki.ros.org/FreMen</url> -->
-
-  <!-- Author tags are optional, mutiple are allowed, one per tag -->
-  <!-- Authors do not have to be maintianers, but could be -->
-  <!-- Example: -->
-  <author email="tkrajnik@lincoln.ac.uk">Tom Krajnik</author>
 
   <!-- The *_depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->

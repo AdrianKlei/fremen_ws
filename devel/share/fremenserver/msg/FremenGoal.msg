@@ -28,3 +28,8 @@ float32[]   values   	#sequence of values observed at the particular times - spe
 #specific for the 'detect' 
 float32   confidence   	#confidence level for the anomaly detection
 
+#specific for the 'upload_params'
+float32[] periods
+float32[] amplitudes
+float32[] phases
+

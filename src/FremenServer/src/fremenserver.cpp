@@ -124,6 +124,13 @@ void actionServerCallback(const fremenserver::FremenGoalConstPtr& goal, Server* 
 			server->setAborted(result);
 		}
 	}
+  else if (goal->operation == "upload_params")
+  {
+    result.success = frelements.upload_params(goal->id.c_str(), (float*)goal->periods.data(), (float*)goal->amplitudes.data(), (float*)goal->phases.data(), (int)goal->periods.size());
+    mess << "Uploaded the parameters and created new FreMEn models";
+    result.message = mess.str();
+    server->setSucceeded(result);
+  }
   else if (goal->operation == "addvalues_modified")
   {
     if (goal->times.size() == goal->values.size()){
@@ -190,7 +197,6 @@ void actionServerCallback(const fremenserver::FremenGoalConstPtr& goal, Server* 
       server->setAborted(result);
     }
   }
-
 	else if (goal->operation == "predict")
 	{
 		float probs[goal->times.size()];
@@ -319,7 +325,7 @@ void actionServerCallback(const fremenserver::FremenGoalConstPtr& goal, Server* 
 	}
 	else if (goal->operation == "view")
 	{
-		if (goal->order < NUM_PERIODICITIES){
+    if (goal->order <= NUM_PERIODICITIES){
 			float amplitudes[goal->order+1];
 			float periods[goal->order+1];
 			float phases[goal->order+1];

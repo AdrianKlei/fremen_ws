@@ -181,6 +181,13 @@ class TModels(object):
                 probs.append(0.5)
             return probs
 
+    def _upload_grid(self, periods, amplitudes, phases):
+        self._fremen.upload_grid(self.name, periods, amplitudes, phases)
+
+    def _save_model_params(self):
+        periods, amplitudes, phases = self._fremen.save_model_params(self.name)
+        return periods, amplitudes, phases
+
     def _set_unknown(self, status):
         """
         Sets the cell state to unknown, indicating that no observations have been made for

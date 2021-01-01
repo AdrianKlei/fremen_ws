@@ -32,7 +32,10 @@ struct FremenGoal_
     , orders()
     , states()
     , values()
-    , confidence(0.0)  {
+    , confidence(0.0)
+    , periods()
+    , amplitudes()
+    , phases()  {
     }
   FremenGoal_(const ContainerAllocator& _alloc)
     : operation(_alloc)
@@ -43,7 +46,10 @@ struct FremenGoal_
     , orders(_alloc)
     , states(_alloc)
     , values(_alloc)
-    , confidence(0.0)  {
+    , confidence(0.0)
+    , periods(_alloc)
+    , amplitudes(_alloc)
+    , phases(_alloc)  {
   (void)_alloc;
     }
 
@@ -75,6 +81,15 @@ struct FremenGoal_
 
    typedef float _confidence_type;
   _confidence_type confidence;
+
+   typedef std::vector<float, typename ContainerAllocator::template rebind<float>::other >  _periods_type;
+  _periods_type periods;
+
+   typedef std::vector<float, typename ContainerAllocator::template rebind<float>::other >  _amplitudes_type;
+  _amplitudes_type amplitudes;
+
+   typedef std::vector<float, typename ContainerAllocator::template rebind<float>::other >  _phases_type;
+  _phases_type phases;
 
 
 
@@ -154,12 +169,12 @@ struct MD5Sum< ::fremenserver::FremenGoal_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "3da51b48cac313fb0b866f25a6c94989";
+    return "4349b55697a98adfe8c174ca69c62660";
   }
 
   static const char* value(const ::fremenserver::FremenGoal_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x3da51b48cac313fbULL;
-  static const uint64_t static_value2 = 0x0b866f25a6c94989ULL;
+  static const uint64_t static_value1 = 0x4349b55697a98adfULL;
+  static const uint64_t static_value2 = 0xe8c174ca69c62660ULL;
 };
 
 template<class ContainerAllocator>
@@ -208,6 +223,11 @@ float32[]   values   	#sequence of values observed at the particular times - spe
 #specific for the 'detect' \n\
 float32   confidence   	#confidence level for the anomaly detection\n\
 \n\
+#specific for the 'upload_params'\n\
+float32[] periods\n\
+float32[] amplitudes\n\
+float32[] phases\n\
+\n\
 ";
   }
 
@@ -235,6 +255,9 @@ namespace serialization
       stream.next(m.states);
       stream.next(m.values);
       stream.next(m.confidence);
+      stream.next(m.periods);
+      stream.next(m.amplitudes);
+      stream.next(m.phases);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -291,6 +314,24 @@ struct Printer< ::fremenserver::FremenGoal_<ContainerAllocator> >
     }
     s << indent << "confidence: ";
     Printer<float>::stream(s, indent + "  ", v.confidence);
+    s << indent << "periods[]" << std::endl;
+    for (size_t i = 0; i < v.periods.size(); ++i)
+    {
+      s << indent << "  periods[" << i << "]: ";
+      Printer<float>::stream(s, indent + "  ", v.periods[i]);
+    }
+    s << indent << "amplitudes[]" << std::endl;
+    for (size_t i = 0; i < v.amplitudes.size(); ++i)
+    {
+      s << indent << "  amplitudes[" << i << "]: ";
+      Printer<float>::stream(s, indent + "  ", v.amplitudes[i]);
+    }
+    s << indent << "phases[]" << std::endl;
+    for (size_t i = 0; i < v.phases.size(); ++i)
+    {
+      s << indent << "  phases[" << i << "]: ";
+      Printer<float>::stream(s, indent + "  ", v.phases[i]);
+    }
   }
 };
 

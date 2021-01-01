@@ -20,6 +20,8 @@ add_service_files(
   PredictStateOrder.srv
   AddOccupancyGrid.srv
   EvaluateModels.srv
+  SaveGrid.srv
+  UploadGrid.srv
 )
 
 generate_messages(

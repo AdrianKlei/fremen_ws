@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-
+import os
+import sys
 import rospy
 import yaml
 import json
@@ -14,6 +15,8 @@ from frongo.srv import PredictStateOrder
 from frongo.srv import GraphModel
 from frongo.srv import AddOccupancyGrid
 from frongo.srv import EvaluateModels
+from frongo.srv import SaveGrid
+from frongo.srv import UploadGrid
 
 
 def load_yaml(filename):
@@ -83,6 +86,9 @@ class frongo(object):   # default name : frongo
                                                     self.add_occupancy_grid_cb)
         self.evaluate_models_vs_static_srv = rospy.Service('/frongo/evaluate_models_vs_static', EvaluateModels,
                                                            self.evaluate_models_vs_static_cb)
+
+        self.save_grid_srv = rospy.Service('/frongo/save_grid', SaveGrid, self.save_grid_cb)
+        self.upload_grid_srv = rospy.Service('/frongo/upload_grid', UploadGrid, self.upload_grid_cb)
         # Services advertised section end
 
         rospy.loginfo("All Done ...")
@@ -212,6 +218,75 @@ class frongo(object):   # default name : frongo
         np.savetxt("/home/adrian/fremen_predictions/uol/float/interval_300/information_array.txt", information_array)
         message = "Completed error calculations."
         return message
+
+    def upload_grid_cb(self, req):
+        grid_name = req.grid_name
+        source_path = os.path.dirname(os.path.abspath(__file__))
+        sys.path.append(os.path.join("/".join(source_path.split("/")[:-1]), "src"))
+        path = os.path.join("/".join(source_path.split("/")[:-1]), "occupancy_grids")
+        path_to_grid = os.path.join("/".join(path.split("/")), grid_name)
+        cells = [f for f in os.listdir(path_to_grid) if
+                 os.path.isfile(os.path.join(path_to_grid, f))]
+        for cell in cells:
+            val = TModels(cell.split(".")[0])
+            self.models.append(val)
+
+        rospy.sleep(3)
+        for cell in cells:
+            cell_parameters_file = yaml.load(open(os.path.join(path_to_grid, cell), "r"))
+            cell_parameters = dict()
+            for param in cell_parameters_file.keys():
+                cell_parameters[param] = cell_parameters_file[param]
+            print(cell_parameters)
+
+            periods = list(cell_parameters['periods'])
+            amplitudes = list(cell_parameters['amplitudes'])
+            phases = list(cell_parameters['phases'])
+            for model in self.models:
+                if model.name == cell.split(".")[0]:
+                    model._upload_grid(periods, amplitudes, phases)
+        print("Uploaded each cell parameters of the grid to the fremenserver !")
+        return True
+
+    def save_grid_cb(self, req):
+        print("Grid FreMEn-parameters are saved to folder...")
+        for model in self.models:
+            periods, amplitudes, phases = model._save_model_params()
+            cell_me = model.name
+            grid_name = str(req.grid_name)  # not sure if neccessary
+            source_path = os.path.dirname(os.path.abspath(__file__))
+            sys.path.append(os.path.join("/".join(source_path.split("/")[:-1]), "src"))
+            path = os.path.join("/".join(source_path.split("/")[:-1]), "occupancy_grids")
+            try:
+                os.stat(path)
+            except:
+                os.mkdir(path)
+
+            path_to_grid = os.path.join("/".join(path.split("/")), grid_name)
+            try:
+                os.stat(path_to_grid)
+            except:
+                os.mkdir(path_to_grid)
+            cell_dict = {'periods': periods,
+                         'amplitudes': amplitudes,
+                         'phases': phases}
+            writepath = path_to_grid + "/" + str(model.name) + '.yaml'
+
+            if os.path.exists(writepath):
+                with open(writepath, "a+") as f:
+                    model_yaml = yaml.load(f)
+                    model_yaml['amplitudes'] = amplitudes
+                    model_yaml['periods'] = periods
+                    model_yaml['phases'] = phases
+                    f.close()
+                with open(writepath, "w") as f:
+                    yaml.dump(model_yaml, f)
+            else:
+                with open(writepath, "a+") as f:
+                    yaml.dump(cell_dict, f)
+                    f.close()
+        print("Parameters have been saved to files successfully!")
+        return True
 
     def create_models(self, data):
         """

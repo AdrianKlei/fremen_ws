@@ -26,6 +26,9 @@ class CFrelementSet
 		  - if not, the measurements are added to the state with the given ID and 'true' is returned*/
 		int add(const char *name,uint32_t times[],float states[],int length);
 
+    /*uploads model parameters from the frongo client and constructs FreMEn models*/
+    int upload_params(const char *name, float periods[], float amplitudes[], float phases[], int length);
+
     /*add new measurements
      - if the name (ID) is new, then a new state is created the function returns 'false'
      - if not, the measurements are added to the state with the given ID and 'true' is returned*/
